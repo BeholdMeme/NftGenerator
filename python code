@@ -1,0 +1,97 @@
+import pyfiglet
+from colorama import Fore, Style, init
+import random
+import os
+
+# Initialize colorama
+init()
+
+# Define padding (add spaces)
+padding = " " * 10  # Increased padding to make the text larger and spaced out more
+
+# Generate ASCII art for the word "queefing" in lowercase
+ascii_art = pyfiglet.figlet_format("queefing", font="slant")
+
+# Split the ASCII art into lines
+ascii_lines = ascii_art.splitlines()
+
+# Calculate the longest line length
+longest_line = max(len(line) for line in ascii_lines)
+
+# Get the size of the terminal window
+columns, rows = os.get_terminal_size()
+
+# Randomize the color options
+colors = [Fore.GREEN, Fore.CYAN, Fore.BLUE, 
+          Fore.RED, Fore.YELLOW, 
+          Fore.MAGENTA, Fore.LIGHTMAGENTA_EX, Fore.WHITE]
+
+# Rainbow color list
+rainbow_colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA, Fore.LIGHTMAGENTA_EX]
+
+# Function to apply rainbow colors to each character
+def rainbow_character(line):
+    colored_line = ''
+    color_index = 0  # Start from the first color in the rainbow
+    for char in line:
+        colored_line += rainbow_colors[color_index] + char
+        color_index = (color_index + 1) % len(rainbow_colors)  # Loop through rainbow colors
+    return colored_line
+
+# Adjust border row length based on the selected border character
+def generate_border():
+    border_characters = ["420", "69", "42069", "$"]  # Added "$" to the border options
+    border = random.choice(border_characters)  # Randomly choose a border character
+    border_length = longest_line + len(padding) * 2 + 6  # Adjusted for additional space
+
+    if border == "69":
+        border_row = (border * ((border_length // len(border)) + 1))[:border_length]
+    elif border == "420":
+        border_row = (border * ((border_length // len(border)) + 1))[:border_length] + "04"
+        if len(border_row) < border_length:
+            border_row += "0"
+    elif border == "$":
+        border_row = (border * ((border_length // len(border)) + 1))[:border_length]  
+        border = "$$"
+    else:  # For "42069"
+        border_row = (border * ((border_length // len(border)) + 2))[:border_length] + "420694"
+        if len(border_row) < border_length:
+            border_row += "9"
+
+    return border, border_row
+
+# Create the final output for each generated art
+def generate_ascii_art():
+    border, border_row = generate_border()
+    
+    top_bottom_border = border_row  # The border is plain with no colors
+
+    padded_ascii_art = "\n".join([f"{border} " + padding + line + padding + f" {border}" for line in ascii_lines])
+
+    final_ascii_art = f"{top_bottom_border}\n{padded_ascii_art}\n{top_bottom_border}"
+    
+    # 10% chance to apply rainbow effect
+    apply_rainbow = random.uniform(0, 100) <= 10  # 10% chance for rainbow
+    chosen_color = random.choice(colors) if not apply_rainbow else None  # No solid color if rainbow is chosen
+
+    return final_ascii_art, chosen_color, apply_rainbow
+
+# Increase horizontal padding to move the text farther right
+horizontal_padding = (columns // 2)  # This moves the text to the right side more
+
+# Add vertical space before printing to center the text vertically
+print("\n" * (rows // 4))
+
+# Print 25 random variations of the ASCII art
+for _ in range(15):
+    final_ascii_art, chosen_color, apply_rainbow = generate_ascii_art()  # Get random ASCII art and color
+
+    for line in final_ascii_art.splitlines():
+        # Apply rainbow effect or solid color based on random choice
+        if apply_rainbow:
+            print(" " * horizontal_padding + rainbow_character(line) + Style.RESET_ALL)
+        else:
+            print(" " * horizontal_padding + chosen_color + line + Style.RESET_ALL)
+
+    print("\n" * 20)  # Add some space between each repetition
+
